@@ -14,12 +14,14 @@ with open(os.path.join("un_bound_histogram", "version.py")) as f:
 setuptools.setup(
     name="un_bound_histogram",
     version=version,
-    description=("This is un_bound_histogram."),
+    description=(
+        "Histogram data in bins but there are 2**64 (almost un-bound) bins."
+    ),
     long_description=long_description,
     long_description_content_type="text/x-rst",
     url="https://github.com/cherenkov-plenoscope/un_bound_histogram",
-    author="AUTHOR",
-    author_email="AUTHOR@mail",
+    author="Sebastian Achim Mueller",
+    author_email="sebastian-achim.mueller@mpi-hd.mpg.de",
     packages=[
         "un_bound_histogram",
     ],
