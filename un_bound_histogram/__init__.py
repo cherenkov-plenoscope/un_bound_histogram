@@ -12,6 +12,9 @@ class UnBoundHistogram:
     def __init__(self, bin_width):
         assert bin_width > 0
         self.bin_width = bin_width
+        self.reset()
+
+    def reset(self):
         self.bins = {}
 
     def assign(self, x):
@@ -121,6 +124,9 @@ class UnBoundHistogram2d:
         assert y_bin_width > 0
         self.x_bin_width = x_bin_width
         self.y_bin_width = y_bin_width
+        self.reset()
+
+    def reset(self):
         self.bins = {}
 
     def assign(self, x, y):
