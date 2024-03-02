@@ -34,27 +34,27 @@ def test_normal():
 
     assert ubh.sum() == SIZE
     assert LOC - 0.05 < ubh.quantile(q=0.5) < LOC + 0.05
-    assert len(ubh.bins) > 50
+    assert len(ubh.counts) > 50
 
 
 def test_assignment():
     ubh = un_bound_histogram.UnBoundHistogram(bin_width=1.0)
 
     ubh.assign(x=0)
-    assert ubh.bins[0] == 1
+    assert ubh.counts[0] == 1
 
     ubh.assign(x=0.001)
-    assert ubh.bins[0] == 2
+    assert ubh.counts[0] == 2
 
     ubh.assign(x=0.5)
-    assert ubh.bins[0] == 3
+    assert ubh.counts[0] == 3
 
     ubh.assign(x=0.999)
-    assert ubh.bins[0] == 4
+    assert ubh.counts[0] == 4
 
     ubh.assign(x=1.0)
-    assert ubh.bins[0] == 4
-    assert ubh.bins[1] == 1
+    assert ubh.counts[0] == 4
+    assert ubh.counts[1] == 1
 
 
 def test_single_bin():
@@ -62,7 +62,7 @@ def test_single_bin():
 
     ubh.assign(x=0.5 * np.ones(100))
     assert ubh.sum() == 100
-    assert ubh.bins[0] == 100
+    assert ubh.counts[0] == 100
     assert ubh.modus() == 0.5
     assert ubh.quantile(q=0.5) == 0.5
 
@@ -73,8 +73,8 @@ def test_gap():
     ubh.assign(x=0.5 * np.ones(100))
     ubh.assign(x=2.5 * np.ones(100))
     assert ubh.sum() == 200
-    assert ubh.bins[0] == 100
-    assert ubh.bins[2] == 100
+    assert ubh.counts[0] == 100
+    assert ubh.counts[2] == 100
 
     assert ubh.modus() == 0.5
 
@@ -92,10 +92,10 @@ def test_to_array():
     bins, counts = ubh.to_array()
 
     assert len(bins) == len(counts)
-    assert len(bins) == len(ubh.bins)
+    assert len(bins) == len(ubh.counts)
     assert SIZE == np.sum(counts)
     for i in range(len(bins)):
         b = bins[i]
         c = counts[i]
-        assert b in ubh.bins
-        assert ubh.bins[b] == c
+        assert b in ubh.counts
+        assert ubh.counts[b] == c

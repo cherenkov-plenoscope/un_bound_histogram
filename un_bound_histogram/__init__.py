@@ -15,7 +15,7 @@ class UnBoundHistogram:
         self.reset()
 
     def reset(self):
-        self.bins = {}
+        self.counts = {}
 
     def assign(self, x):
         """
@@ -32,10 +32,10 @@ class UnBoundHistogram:
         unique, counts = np.unique(xb, return_counts=True)
         bins = dict(zip(unique, counts))
         for key in bins:
-            if key in self.bins:
-                self.bins[key] += bins[key]
+            if key in self.counts:
+                self.counts[key] += bins[key]
             else:
-                self.bins[key] = bins[key]
+                self.counts[key] = bins[key]
 
     def sum(self):
         """
@@ -44,7 +44,7 @@ class UnBoundHistogram:
         sum : int
             The sum of all content in all bins.
         """
-        return bins_utils.sum(bins=self.bins)
+        return bins_utils.sum(bins=self.counts)
 
     def argmax(self):
         """
@@ -53,7 +53,7 @@ class UnBoundHistogram:
         argmax : int
             The key of the bin with the largest content.
         """
-        return bins_utils.argmax(bins=self.bins)
+        return bins_utils.argmax(bins=self.counts)
 
     def range(self):
         """
@@ -62,31 +62,31 @@ class UnBoundHistogram:
         range : (int, int)
             The key with the lowest value and the key with the highest value.
         """
-        return bins_utils.range(bins=self.bins)
+        return bins_utils.range(bins=self.counts)
 
     def modus(self):
-        if len(self.bins) == 0:
+        if len(self.counts) == 0:
             raise RuntimeError("No values in bins yet.")
 
         modus_key = self.argmax()
         return (modus_key + 0.5) * self.bin_width
 
     def quantile(self, q):
-        if len(self.bins) == 0:
+        if len(self.counts) == 0:
             raise RuntimeError("No values in bins yet.")
         assert 0 <= q <= 1.0
         total = self.sum()
         target = total * q
-        sorted_keys = sorted(self.bins.keys())
+        sorted_keys = sorted(self.counts.keys())
         part = 0
         for key in sorted_keys:
-            if part + self.bins[key] < target:
-                part += self.bins[key]
+            if part + self.counts[key] < target:
+                part += self.counts[key]
             else:
                 break
         missing = target - part
-        assert missing <= self.bins[key]
-        bin_frac = missing / self.bins[key]
+        assert missing <= self.counts[key]
+        bin_frac = missing / self.counts[key]
         bin_center = key
         bin_quantile = bin_center + bin_frac
         quantile = bin_quantile * self.bin_width
@@ -100,18 +100,18 @@ class UnBoundHistogram:
             Indices and content of bins with content > 0. Two arrays. ``bins``
             are the indices, and ``coutns`` are the content of the bins.
         """
-        b = np.zeros(len(self.bins), dtype="i8")
-        c = np.zeros(len(self.bins), dtype="u8")
-        for i, ib in enumerate(self.bins):
+        b = np.zeros(len(self.counts), dtype="i8")
+        c = np.zeros(len(self.counts), dtype="u8")
+        for i, ib in enumerate(self.counts):
             b[i] = ib
-            c[i] = self.bins[ib]
+            c[i] = self.counts[ib]
         return b, c
 
     def percentile(self, p):
         return self.quantile(q=p * 1e-2)
 
     def to_dict(self):
-        return {"bin_width": self.bin_width, "bins": self.bins}
+        return {"bin_width": self.bin_width, "bins": self.counts}
 
     def __repr__(self):
         out = "{:s}(bin_width={:f})".format(
@@ -142,7 +142,7 @@ class UnBoundHistogram2d:
         self.reset()
 
     def reset(self):
-        self.bins = {}
+        self.counts = {}
 
     def assign(self, x, y):
         """
@@ -169,10 +169,10 @@ class UnBoundHistogram2d:
             xkey = xunique[i]
             ykey = yunique[i]
             xykey = (xkey, ykey)
-            if xykey in self.bins:
-                self.bins[xykey] += wcounts[i]
+            if xykey in self.counts:
+                self.counts[xykey] += wcounts[i]
             else:
-                self.bins[xykey] = wcounts[i]
+                self.counts[xykey] = wcounts[i]
 
     def sum(self):
         """
@@ -181,7 +181,7 @@ class UnBoundHistogram2d:
         sum : int
             The sum of all content in all bins.
         """
-        return bins_utils.sum(bins=self.bins)
+        return bins_utils.sum(bins=self.counts)
 
     def argmax(self):
         """
@@ -190,16 +190,16 @@ class UnBoundHistogram2d:
         argmax : int
             The key of the bin with the largest content.
         """
-        return bins_utils.argmax(bins=self.bins)
+        return bins_utils.argmax(bins=self.counts)
 
     def range(self):
-        return bins_utils.range2d(bins=self.bins)
+        return bins_utils.range2d(bins=self.counts)
 
     def to_dict(self):
         return {
             "x_bin_width": self.x_bin_width,
             "y_bin_width": self.x_bin_width,
-            "bins": self.bins,
+            "bins": self.counts,
         }
 
     def to_array(self):
@@ -211,13 +211,13 @@ class UnBoundHistogram2d:
             ``xbins`` and ``ybins`` are the indices, and ``coutns`` are the
             content of the bins.
         """
-        xb = np.zeros(len(self.bins), dtype="i4")
-        yb = np.zeros(len(self.bins), dtype="i4")
-        c = np.zeros(len(self.bins), dtype="u8")
-        for i, ixyb in enumerate(self.bins):
+        xb = np.zeros(len(self.counts), dtype="i4")
+        yb = np.zeros(len(self.counts), dtype="i4")
+        c = np.zeros(len(self.counts), dtype="u8")
+        for i, ixyb in enumerate(self.counts):
             xb[i] = ixyb[0]
             yb[i] = ixyb[1]
-            c[i] = self.bins[ixyb]
+            c[i] = self.counts[ixyb]
         return xb, yb, c
 
     def __repr__(self):

@@ -92,11 +92,11 @@ def test_to_array():
 
     assert len(xbins) == len(ybins)
     assert len(xbins) == len(counts)
-    assert len(xbins) == len(ubh.bins)
+    assert len(xbins) == len(ubh.counts)
     assert SIZE == np.sum(counts)
     for i in range(len(xbins)):
         xb = xbins[i]
         yb = ybins[i]
         c = counts[i]
-        assert (xb, yb) in ubh.bins
-        assert ubh.bins[(xb, yb)] == c
+        assert (xb, yb) in ubh.counts
+        assert ubh.counts[(xb, yb)] == c
