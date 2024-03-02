@@ -70,3 +70,33 @@ def test_normal():
     assert y_range[0] <= yb_max <= y_range[1]
 
     assert ubh.sum() == SIZE
+
+
+def test_to_array():
+    prng = np.random.Generator(np.random.PCG64(9))
+    SIZE = 100000
+    XLOC = 3.0
+    YLOC = -4.5
+
+    ubh = un_bound_histogram.UnBoundHistogram2d(
+        x_bin_width=0.1,
+        y_bin_width=0.1,
+    )
+
+    ubh.assign(
+        x=prng.normal(loc=XLOC, scale=1.0, size=SIZE),
+        y=prng.normal(loc=YLOC, scale=1.0, size=SIZE),
+    )
+
+    xbins, ybins, counts = ubh.to_array()
+
+    assert len(xbins) == len(ybins)
+    assert len(xbins) == len(counts)
+    assert len(xbins) == len(ubh.bins)
+    assert SIZE == np.sum(counts)
+    for i in range(len(xbins)):
+        xb = xbins[i]
+        yb = ybins[i]
+        c = counts[i]
+        assert (xb, yb) in ubh.bins
+        assert ubh.bins[(xb, yb)] == c

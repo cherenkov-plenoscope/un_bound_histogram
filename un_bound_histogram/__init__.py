@@ -92,6 +92,21 @@ class UnBoundHistogram:
         quantile = bin_quantile * self.bin_width
         return quantile
 
+    def to_array(self):
+        """
+        Returns
+        -------
+        (bins, counts) : (array i8, array u8)
+            Indices and content of bins with content > 0. Two arrays. ``bins``
+            are the indices, and ``coutns`` are the content of the bins.
+        """
+        b = np.zeros(len(self.bins), dtype="i8")
+        c = np.zeros(len(self.bins), dtype="u8")
+        for i, ib in enumerate(self.bins):
+            b[i] = ib
+            c[i] = self.bins[ib]
+        return b, c
+
     def percentile(self, p):
         return self.quantile(q=p * 1e-2)
 
@@ -186,6 +201,24 @@ class UnBoundHistogram2d:
             "y_bin_width": self.x_bin_width,
             "bins": self.bins,
         }
+
+    def to_array(self):
+        """
+        Returns
+        -------
+        (xbins, ybins, counts) : (array i4, array i4, array u8)
+            Indices and content of bins with content > 0. Three arrays.
+            ``xbins`` and ``ybins`` are the indices, and ``coutns`` are the
+            content of the bins.
+        """
+        xb = np.zeros(len(self.bins), dtype="i4")
+        yb = np.zeros(len(self.bins), dtype="i4")
+        c = np.zeros(len(self.bins), dtype="u8")
+        for i, ixyb in enumerate(self.bins):
+            xb[i] = ixyb[0]
+            yb[i] = ixyb[1]
+            c[i] = self.bins[ixyb]
+        return xb, yb, c
 
     def __repr__(self):
         out = "{:s}(bin_width={:f})".format(

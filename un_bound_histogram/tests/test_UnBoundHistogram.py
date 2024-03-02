@@ -79,3 +79,23 @@ def test_gap():
     assert ubh.modus() == 0.5
 
     np.testing.assert_almost_equal(ubh.quantile(q=0.5), 1.0)
+
+
+def test_to_array():
+    prng = np.random.Generator(np.random.PCG64(9))
+    SIZE = 10000
+    LOC = 3.0
+
+    ubh = un_bound_histogram.UnBoundHistogram(bin_width=0.1)
+    ubh.assign(x=prng.normal(loc=LOC, scale=1.0, size=SIZE))
+
+    bins, counts = ubh.to_array()
+
+    assert len(bins) == len(counts)
+    assert len(bins) == len(ubh.bins)
+    assert SIZE == np.sum(counts)
+    for i in range(len(bins)):
+        b = bins[i]
+        c = counts[i]
+        assert b in ubh.bins
+        assert ubh.bins[b] == c
